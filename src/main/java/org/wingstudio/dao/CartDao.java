@@ -14,6 +14,7 @@ import java.util.List;
 public interface CartDao extends JpaRepository<Cart,Long> {
     Cart findByUserAndProduct(User user, Product product);
     List<Cart> findByUser(User user);
+    List<Cart> findByUserAndChecked(User user,Byte checked);
     Integer countByUserAndChecked(User user,byte checked);
     @Transactional
     @Modifying

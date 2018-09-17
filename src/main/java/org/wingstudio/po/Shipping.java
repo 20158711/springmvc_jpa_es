@@ -12,6 +12,9 @@ import java.util.Date;
 public class Shipping {
 
     public Shipping(){}
+    public Shipping(Long id){
+        this.id=id;
+    }
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

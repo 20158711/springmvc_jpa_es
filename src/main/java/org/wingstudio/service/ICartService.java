@@ -1,10 +1,11 @@
 package org.wingstudio.service;
 
 import org.wingstudio.common.ServerResponse;
+import org.wingstudio.po.User;
 import org.wingstudio.vo.CartVo;
 
 public interface ICartService {
-    ServerResponse<CartVo> add(Long userId, Long productId, Integer count);
+    ServerResponse<CartVo> add(User user, Long productId, Integer count);
 
     ServerResponse<CartVo> update(Long id, Long productId, Integer count);
 

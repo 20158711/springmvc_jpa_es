@@ -3,7 +3,9 @@ package org.wingstudio.common;
 import com.google.common.collect.Sets;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.management.loading.MLetContent;
 import java.util.Set;
 
 public class Const {
@@ -44,5 +46,40 @@ public class Const {
         byte UN_CHECKED=0;
         String LIMIT_NUM_SUCCESS="success";
         String LIMIT_NUM_FAIL="fail";
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public enum PaymentTypeEnum{
+        ONLINE_PAY(Byte.valueOf("1"),"在线支付");
+        private byte code;
+        private String value;
+        public static PaymentTypeEnum codeOf(byte code){
+            for (PaymentTypeEnum anEnum : values()) {
+                if (anEnum.getCode()==code){
+                    return anEnum;
+                }
+            }
+            throw new RuntimeException("没有这样的状态");
+        }
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public enum OrderStatusEnum{
+        NO_PAY(Byte.valueOf("1"),"未付款"),
+        CANCELED(Byte.valueOf("2"),"订单已经取消"),
+        PAID(Byte.valueOf("3"),"订单已付款"),
+        SHIPPED(Byte.valueOf("4"),"订单已发货");
+        private Byte code;
+        private String value;
+        public static OrderStatusEnum codeOf(Byte code){
+            for (OrderStatusEnum anEnum : values()) {
+                if(anEnum.getCode()==code){
+                    return anEnum;
+                }
+            }
+            throw new RuntimeException("没有这样的状态");
+        }
     }
 }

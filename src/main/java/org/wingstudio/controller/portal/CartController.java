@@ -39,7 +39,7 @@ public class CartController {
         if (user == null) {
             return ServerResponse.errorCodeMessage(ResponseCode.NEED_LOGIN);
         }
-        return cartService.add(user.getId(),productId,count);
+        return cartService.add(user,productId,count);
     }
 
     @ApiOperation("更新购物车")

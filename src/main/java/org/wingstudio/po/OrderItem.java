@@ -16,6 +16,8 @@ public class OrderItem {
     @ManyToOne
     private User user;
 
+    private Long orderNo;
+
     @ManyToOne
     private EsOrder esOrder;
 

@@ -8,6 +8,7 @@ import org.wingstudio.common.Const;
 import org.wingstudio.common.ResponseCode;
 import org.wingstudio.common.ServerResponse;
 import org.wingstudio.dao.CartDao;
+import org.wingstudio.dao.ProductDao;
 import org.wingstudio.po.Cart;
 import org.wingstudio.po.Product;
 import org.wingstudio.po.User;
@@ -16,6 +17,7 @@ import org.wingstudio.util.PropertiesUtil;
 import org.wingstudio.vo.CartProductVo;
 import org.wingstudio.vo.CartVo;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,26 +28,34 @@ public class CartServiceImpl implements ICartService {
     @Autowired
     private CartDao cartDao;
 
+    @Autowired
+    private ProductDao productDao;
+
     @Override
-    public ServerResponse<CartVo> add(Long userId, Long productId, Integer count) {
+    public ServerResponse<CartVo> add(User user, Long productId, Integer count) {
         if (productId==null || count==null){
             return ServerResponse.errorCodeMessage(ResponseCode.ILLEGAL_ARGUMENT);
         }
-        Cart cart = cartDao.findByUserAndProduct(new User(userId), new Product(productId));
+        Product product=productDao.findOne(productId);
+        Cart cart = cartDao.findByUserAndProduct(user, product);
+        Cart save=null;
         if (cart == null) {
             //新增
             Cart cartItem=new Cart();
             cartItem.setQuantity(count);
             cartItem.setChecked(Const.Cart.CHECKED);
-            cartItem.setProduct(new Product(productId));
-            cartItem.setUser(new User(userId));
-            Cart save = cartDao.save(cartItem);
+            cartItem.setProduct(product);
+            cartItem.setUser(user);
+            save = cartDao.save(cartItem);
         }else {
             //存在，数量相加
             cart.setQuantity(count+cart.getQuantity());
-            Cart save=cartDao.save(cart);
+            save=cartDao.save(cart);
         }
-        return list(userId);
+        if (save != null) {
+            return list(user.getId());
+        }
+        return ServerResponse.error();
     }
 
     @Override
@@ -98,7 +108,7 @@ public class CartServiceImpl implements ICartService {
         return ServerResponse.success(result);
     }
 
-    private CartVo getCartVoLimit(Long userId){
+    public CartVo getCartVoLimit(Long userId){
         CartVo cartVo=new CartVo();
         List<Cart> cartList = cartDao.findByUser(new User(userId));
         List<CartProductVo> cartProductVoList=new ArrayList<>();
